@@ -9,43 +9,55 @@
 
 using namespace std;
 
-// maries
-Location below(VanInfo& van){
-	return (std::make_pair(2*van.location.first+1, van.location.second));
-}
-Location above(VanInfo& van){
-	return ( std::make_pair(2*van.location.first-1, van.location.second));
-}
-Location left(VanInfo& van){
-	return ( std::make_pair(2*van.location.first, van.location.second-1));
-}
-Location right(VanInfo& van){
-	return ( std::make_pair(2*van.location.first, van.location.second));
+Location goDown(Location loc){
+	loc.first = 2 * (loc.first) + 1;
+	return loc;
 }
 
-//tim
-Location goDown(VanInfo& van){
-	van.location.first = 2 * (van.location.first) + 1;
-	return van.location;
+Location goUp(Location loc){
+	loc.first = 2 * (loc.first) - 1;
+	return loc;
 }
 
-Location goUp(VanInfo& van){
-	van.location.first = 2 * (van.location.first) - 1;
-	return van.location;
+Location goLeft(Location loc){
+	loc.first = 2 * (loc.first);
+	loc.second = loc.second - 1;
+	return loc;
 }
 
-Location goLeft(VanInfo& van){
-	van.location.first = 2 * (van.location.first);
-	van.location.second = van.location.second - 1;
-	return van.location;
+Location goRight(Location loc){
+	loc.first = 2 * (loc.first);
+	loc.second = loc.second + 1;
+	return loc;
+
 }
 
-Location goRight(VanInfo& van){
-	van.location.first = 2 * (van.location.first);
-	van.location.second = van.location.second + 1;
-	return van.location;
+std::vector<std::pair<int,int>> createRoute(Location initialPosition, Location targetPosition) {
+
+	std::vector<std::pair<int,int>> route;
+	while(initialPosition.first != targetPosition.first || initialPosition.second != targetPosition.second){
+		if(initialPosition.first < targetPosition.first){
+			route.push_back(goDown(initialPosition));
+			initialPosition.first += 1;
+		}
+		else if(initialPosition.first > targetPosition.first){
+			route.push_back(goUp(initialPosition));
+			initialPosition.first -= 1;
+		}
+		else if(initialPosition.second < targetPosition.second){
+			route.push_back(goRight(initialPosition));
+			initialPosition.second += 1;
+		}
+		else if(initialPosition.second > targetPosition.second){
+			route.push_back(goLeft(initialPosition));
+			initialPosition.second -= 1;
+		}
+	}
+	for(int i = 0; i < route.size(); i++){
+		cout << route[i].first << ":" << route[i].second << endl;
+	}
+	return route;
 }
-//
 
 int _tmain(int argc, _TCHAR* argv[])
 {
