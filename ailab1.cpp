@@ -31,14 +31,14 @@ Location goRight(Location loc){
 return loc;
 }
 
-	void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, vector<DeliveryInfo>& waitingDeliveries, vector<DeliveryInfo>& activeDeliveries, vector<std::pair<int,int>>& completedDeliveries, wstring& output, vector<vector<int>>& Edges){
-		Vans.clear();
-		Instructions.clear();
-		waitingDeliveries.clear();
-		activeDeliveries.clear();
-		completedDeliveries.clear();
-		output.clear();
-		Edges.clear();
+void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, vector<DeliveryInfo>& waitingDeliveries, vector<DeliveryInfo>& activeDeliveries, vector<std::pair<int,int>>& completedDeliveries, wstring& output, vector<vector<int>>& Edges){
+	Vans.clear();
+	Instructions.clear();
+	waitingDeliveries.clear();
+	activeDeliveries.clear();
+	completedDeliveries.clear();
+	output.clear();
+	Edges.clear();
 }
 
 std::vector<std::pair<int,int>> createRoute(Location initialPosition, Location targetPosition) {
