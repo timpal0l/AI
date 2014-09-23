@@ -42,9 +42,6 @@ void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, 
 		Edges.clear();
 }
 
-// Print instructions for each van, just to get a clue
-void printInstructions(vector<VanInfo>& Vans)
-
 // Create route, returns a vector of locations
 vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosition) {
 	vector<pair<int,int>> route;
@@ -107,9 +104,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	Instructions.insert(make_pair(0, route0));
 	dmc.sendInstructions(Instructions, output);
 
-	// Main loop. Get info, compute route, send instructions
+	// Main loop. Get info, send instructions
 	while (true){													
 		
+		dmc.getInformation(Time, Edges, Vans, waitingDeliveries, activeDeliveries, completedDeliveries, output);
 
 		if (!waitingDeliveries.empty()){
 			cout << "Waiting deliveries: Delivery #1: to be picked up at " << waitingDeliveries[0].pickUp.first << " " << waitingDeliveries[0].pickUp.second << endl;
@@ -122,6 +120,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			vector<pair<int,int>> route1 = createRoute(loc, target);
 			Instructions.clear();
 			Instructions.insert(make_pair(0, route1));
+			//cout << "Instructions[0][0]: inside activeDeliveries loop " <<  Instructions[0][0].first << " " << Instructions[0][0].second << endl;
 		}
 			
 		if (!completedDeliveries.empty()){
