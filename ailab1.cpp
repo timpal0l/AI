@@ -11,6 +11,12 @@
 
 using namespace std;
 
+struct Node{
+	Node *parent;
+	Location location;
+	int f, g, h;
+};
+
 Location goDown(Location loc){
 	loc.first = 2 * (loc.first) + 1;
 	return loc;
@@ -22,43 +28,57 @@ Location goUp(Location loc){
 Location goLeft(Location loc){
 	loc.first = 2 * (loc.first);
 	loc.second = loc.second - 1;
-return loc;
+	return loc;
 }
 Location goRight(Location loc){
 	loc.first = 2 * (loc.first);
 	loc.second = loc.second;
-return loc;
+	return loc;
 }
 
-vector<Location> aStarRoute(Node start, Node goal){
-
+vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<int>> &Edges){
 	/*initialize the open and the closed vectors */
 	vector<Node> open;
 	vector<Node> closed;
-
-	open.push_back(start);
-
+	vector<pair<int, int>> route;
+	Node currentNode;
+	currentNode.location = start;
+	currentNode.f = 0;
+	pair <int, int> rightEdge, leftEdge, topEdge, bottomEdge, cheapestEdge;
+	int rightCost, leftCost, topCost, bottomCost, cheapestCost;
+	open.push_back(currentNode);
 	while(!open.empty()){
 		//Get the node off the open list with the lowest f and call it node_current
-
-		if((start.location.first == 0) && (start.location.first == 0)){
+		if((start.first == 0) && (start.second == 0)){
 			/* topLeft */
 			/* check weight of down and right only */
-			std::pair<int,int> rightEgde = goRight(start.location);
+			pair<int,int> rightEgde = goRight(start);
 		}
 
-
-
+		if((start.first == 40) && (start.second == 40)){
+			leftEdge = goLeft(start);
+			topEdge = goUp(start);
+			leftCost = Edges[leftEdge.first][leftEdge.second];
+			topCost = Edges[topEdge.first][topEdge.second];
+			if (leftCost < topCost){
+				cheapestCost = leftCost;
+				cheapestEdge = leftEdge;
+			}
+			else{
+				cheapestCost = topCost;
+				cheapestEdge = topEdge;
+			}
+			
+		}
 		//find the best route of from the connecting edges
-
 		/*Location oneUp = createRoute(start, goUp(start));
 		Location oneRight = createRoute(start, goRight(start));
 		Location oneDown = createRoute(start, goDown(start));
 		Location oneLeft = createRoute(start, goLeft(start));*/
-
 	}
-
+	return route;
 }
+
 void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, vector<DeliveryInfo>& waitingDeliveries, 
 	vector<DeliveryInfo>& activeDeliveries, vector<std::pair<int,int>>& completedDeliveries, wstring& output, vector<vector<int>>& Edges){
 		Vans.clear();
@@ -66,6 +86,7 @@ void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, 
 		waitingDeliveries.clear();
 		activeDeliveries.clear();
 		completedDeliveries.clear();
+
 		output.clear();
 		Edges.clear();
 }
@@ -85,6 +106,10 @@ int closestVan(Location loc, vector<VanInfo> Vans, int busyVans[]){
 	}
 	return closestVan;
 }
+
+
+
+
 
 
 // Create route, returns a vector of locations
@@ -124,9 +149,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool OK;
 
 	srand (time(NULL));
-	
+
 	DM_Client dmc = DM_Client(group, OK);							// Initiate DM client
-	
+
 	// Why?
 	static const std::wstring hws = dmc.getHighayString();
 	static const std::wstring s = dmc.getSuburbanString();
@@ -135,7 +160,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Initiate a vector to contain the node vectors
 	std::vector<std::vector<std::wstring>> nodes;					
-									
+
 	// Initiate everything needed for getInformation()
 	int Time = 360;													
 	vector<std::vector<int>> Edges;							
@@ -186,7 +211,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << " " << endl;
 		cout << "Latest cargo booked: " << latestCargoBooked << endl;
 		dmc.getInformation(Time, Edges, Vans, waitingDeliveries, activeDeliveries, completedDeliveries, output);
-		
+
 		cout << "Time: " << Time << endl;
 
 		if (!waitingDeliveries.empty()){
@@ -253,13 +278,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Position of van4: " << Vans[4].location.first << " " << Vans[4].location.second << endl;
 
 		cout << "busyVans 0 to 5 status: " << busyVans[0] << " " << busyVans[1] << " " << busyVans[2] << " " << busyVans[3] << " " << busyVans[4] << endl;
-	
+
 		// Clear everything before next iteration
 		if (!Instructions.empty()){
 			dmc.sendInstructions(Instructions, output);
 		}
 		reset(Vans, Instructions, waitingDeliveries, activeDeliveries, completedDeliveries, output, Edges);
 	}
-		return 0;
+	return 0;
 }
 
