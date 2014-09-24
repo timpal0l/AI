@@ -29,7 +29,7 @@ return loc;
 }
 Location goRight(Location loc){
 	loc.first = 2 * (loc.first);
-	loc.second = loc.second + 1;
+	loc.second = loc.second;
 return loc;
 }
 
@@ -165,6 +165,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (!Vans[i].instructions.empty()){
 				cout << "Instructions for van" << i << ": " << Vans[i].instructions[0].first << " " << Vans[i].instructions[0].second << endl;
 			}
+			else if (Vans[i].cargo > -1){
+				break;
+			}
 			else{
 				busyVans[i] = 0;
 			}
@@ -197,8 +200,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 		}
 		if (!activeDeliveries.empty()){
-			lastPickedUpCargo = activeDeliveries[activeDeliveries.size()-1].Number;
-			for (int i=0; i<=activeDeliveries.size()-1; i++){
+			lastPickedUpCargo = activeDeliveries.back().Number;
+			for (int i=0; i<=20; i++){
 				if (Vans[i].cargo == lastPickedUpCargo){
 					if (busyVans[i] == 2){
 						break;
