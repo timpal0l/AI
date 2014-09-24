@@ -6,6 +6,8 @@
 #pragma comment(lib,"DeliveryManClient")
 #include <iostream>
 #include <vector>
+#include <time.h>
+#include <stdlib.h>
 
 
 using namespace std;
@@ -72,13 +74,13 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 }
 
 
-
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 
 	const std::wstring group = L"LeGroup4";							// Group name for DM_Client()
 	bool OK;
+
+	srand (time(NULL));
 	
 	DM_Client dmc = DM_Client(group, OK);							// Initiate DM client
 	
@@ -134,7 +136,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	route = createRoute(loc, target);
 	Instructions.insert(make_pair(3, route));
 	dmc.sendInstructions(Instructions, output);
-	
+	bool sendInstr = false;
+
+
 	// Main loop. Get info, send instructions
 	while (true){			
 
@@ -145,11 +149,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 		cout << "Time: " << Time << endl;
 
+		if (!waitingDeliveries.empty()){
+			cout << "Waiting delivery at node: " << waitingDeliveries[0].pickUp.first << " " << waitingDeliveries[0].pickUp.second << endl;
+		}
+
 		cout << "Position of van0: " << Vans[0].location.first << " " << Vans[0].location.second << endl;
 		cout << "Position of van1: " << Vans[1].location.first << " " << Vans[1].location.second << endl;
 		cout << "Position of van2: " << Vans[2].location.first << " " << Vans[2].location.second << endl;
 		cout << "Position of van3: " << Vans[3].location.first << " " << Vans[3].location.second << endl;
 		cout << "Position of van4: " << Vans[4].location.first << " " << Vans[4].location.second << endl;
+
+		cout << "busyVans 0 to 5 status: " << busyVans[0] << " " << busyVans[1] << " " << busyVans[2] << " " << busyVans[3] << " " << busyVans[4] << endl;
 
 		for (int i=0; i<5; i++){
 			if (!Vans[i].instructions.empty()){
@@ -176,6 +186,7 @@ int _tmain(int argc, _TCHAR* argv[])
 								target = waitingDeliveries[x].pickUp;
 								route = createRoute(loc, target);	
 								Instructions.insert(make_pair(i, route));
+								sendInstr = true;
 								busyVans[i] = 1;
 								latestCargoBooked = waitingDeliveries[0].Number;
 								break;
@@ -201,15 +212,11 @@ int _tmain(int argc, _TCHAR* argv[])
 						}
 					route = createRoute(loc, target);
 					Instructions.insert(make_pair(i, route));
+					sendInstr = true;
 					}
 				}
 			}
 			cout << "Active deliveries: Delivery #1 to be dropped off at " << activeDeliveries[0].dropOff.first << " " << activeDeliveries[0].dropOff.second << endl;
-			pair <int, int> loc = Vans[0].location;
-			pair <int, int> target = activeDeliveries[0].dropOff;
-			vector<pair<int,int>> route = createRoute(loc, target);
-			Instructions.clear();
-			Instructions.insert(make_pair(0, route));
 			cout << "Instructions[0][0]: inside activeDeliveries loop " <<  Instructions[0][0].first << " " << Instructions[0][0].second << endl;
 		}
 			
@@ -217,7 +224,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			cout << "Completed delivery! " << endl;
 		}
 		// Clear everything before next iteration
-		dmc.sendInstructions(Instructions, output);
+		if (sendInstr){
+			dmc.sendInstructions(Instructions, output);
+		}
+		sendInstr = false;
 		reset(Vans, Instructions, waitingDeliveries, activeDeliveries, completedDeliveries, output, Edges);
 	}
 		return 0;
