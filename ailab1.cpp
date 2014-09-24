@@ -30,6 +30,35 @@ Location goRight(Location loc){
 return loc;
 }
 
+vector<Location> aStarRoute(Node start, Node goal){
+
+	/*initialize the open and the closed vectors */
+	vector<Node> open;
+	vector<Node> closed;
+
+	open.push_back(start);
+
+	while(!open.empty()){
+		//Get the node off the open list with the lowest f and call it node_current
+
+		if((start.location.first == 0) && (start.location.first == 0)){
+			/* topLeft */
+			/* check weight of down and right only */
+			std::pair<int,int> rightEgde = goRight(start.location);
+		}
+
+
+
+		//find the best route of from the connecting edges
+
+		/*Location oneUp = createRoute(start, goUp(start));
+		Location oneRight = createRoute(start, goRight(start));
+		Location oneDown = createRoute(start, goDown(start));
+		Location oneLeft = createRoute(start, goLeft(start));*/
+
+	}
+
+}
 void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, vector<DeliveryInfo>& waitingDeliveries, 
 	vector<DeliveryInfo>& activeDeliveries, vector<std::pair<int,int>>& completedDeliveries, wstring& output, vector<vector<int>>& Edges){
 		Vans.clear();
