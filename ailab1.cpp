@@ -41,20 +41,46 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<i
 	vector<Node> open;
 	vector<Node> closed;
 	vector<pair<int, int>> route;
+	
 	Node currentNode;
 	currentNode.location = start;
 	currentNode.f = 0;
+	
 	pair <int, int> rightEdge, leftEdge, topEdge, bottomEdge, cheapestEdge;
 	int rightCost, leftCost, topCost, bottomCost, cheapestCost;
 	open.push_back(currentNode);
+	
 	while(!open.empty()){
-		//Get the node off the open list with the lowest f and call it node_current
+
+		/* topLeft */
 		if((start.first == 0) && (start.second == 0)){
-			/* topLeft */
+
 			/* check weight of down and right only */
-			pair<int,int> rightEgde = goRight(start);
+			rightEdge = goRight(start);
+			downEdge = goDown(start);
+
+			int rightEdgecost = Edges[rightEdge.first][rightEdge.second];
+			int downEdgecost = Edges[downEdge.first][downEdge.second];
+			int q;
+
+			if(rightEdgecost > downEdgecost){
+				q = rightEdgecost;
+			}
+			else{
+				q = downEdgecost;
+			}
+
+			//do shit, and push q to closed
 		}
 
+		/* midLeft */
+		if((start.first > 0) && (start.second == 0)){
+			/* check weight of down and right only */
+
+
+
+		}
+		/*bottomRight*/
 		if((start.first == 40) && (start.second == 40)){
 			leftEdge = goLeft(start);
 			topEdge = goUp(start);
@@ -70,11 +96,6 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<i
 			}
 			
 		}
-		//find the best route of from the connecting edges
-		/*Location oneUp = createRoute(start, goUp(start));
-		Location oneRight = createRoute(start, goRight(start));
-		Location oneDown = createRoute(start, goDown(start));
-		Location oneLeft = createRoute(start, goLeft(start));*/
 	}
 	return route;
 }
