@@ -131,7 +131,7 @@ int closestVan(Location loc, vector<VanInfo> Vans, int busyVans[]){
 	int tempDistance = -1;
 	for(int i = 0; i < 5; i++){
 		if(busyVans[i] == 0){
-			tempDistance = ((abs(loc.first - Vans[i].location.first)) + (abs(loc.second - Vans[i].location.second)));
+			tempDistance = getManhattan(loc, Vans[i].location);
 			if (tempDistance < closestDistance){
 				closestVan = Vans[i].Number;
 				closestDistance = tempDistance;
