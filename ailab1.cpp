@@ -54,6 +54,11 @@ pair<int, int> goRight(Location loc){
 }
 
 
+int getManhattan(Location location, Location target){
+	int manhattanDistance = ((abs(location.first - target.first)) + (abs(location.second - target.second));
+	return manhattanDistance;
+}
+
 vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	// Initialize the open and the closed vectors 
 	vector<Node> open;
@@ -106,7 +111,8 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	return route;
 }
 
-int getAbsoluteDistance
+
+
 
 
 void reset(){
@@ -134,9 +140,6 @@ int closestVan(Location loc, vector<VanInfo> Vans, int busyVans[]){
 	}
 	return closestVan;
 }
-
-
-
 
 
 
@@ -169,7 +172,6 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 	return route;
 }
 
-
 Node createNode(int parentFCost, Location parentLocation, Location neighborLocation, Location mainGoal){
 	Node newNode;
 	if (parentLocation.first < neighborLocation.first){
@@ -187,10 +189,9 @@ Node createNode(int parentFCost, Location parentLocation, Location neighborLocat
 		newNode.g = Edges[goLeft(location).first][goLeft(location).second];
 	}
 	newNode.f = parentFCost + newNode.g;
-	newNode.h = createRoute(neighbor, mainGoal).size();
+	// DOES NOT WORK newNode.h = createRoute(neighbor, mainGoal).size();
 	return newNode;
 }
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	const std::wstring group = L"LeGroup4";							// Group name for DM_Client()
