@@ -67,6 +67,7 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	Node currentNode, nodeWithLeastF;
 	currentNode.location = start;
 	currentNode.f = 0;
+	currentNode.parent = NULL;
 	vector<Location> neighborList;
 	Location rightNeighbor, leftNeighbor, topNeighbor, bottomNeighbor;
 	pair <int, int> rightEdge, leftEdge, topEdge, bottomEdge, cheapestEdge;
@@ -95,15 +96,26 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 			// If the new node is not already on the open-list OR closed-list 
 			// with a lower f-value than newNode, then we add the new node to 
 			// the open list.
+			if (neighborList[i] == goal){
+				route = getAStarRoute(newNode);
+				return route;
+			}
 			if (shouldWeAddNode(newNode, open, closed)){
 				open.push_back(newNode);
 			}
 		}
 		closed.push_back(nodeWithLeastF);
 	}
-	return route;
 }
 
+vector<pair<int, int>> getAStarRoute(Node node){
+	vector<pair<int, int>> route;
+	while (node.parent != NULL){
+		route.push_back(node.edgeToParent);
+		node = *node.parent;
+	}
+	return route;
+}
 
 bool shouldWeAddNode(Node node, vector<Node> open, vector<Node> closed){
 	bool returnValue = true;
@@ -149,8 +161,6 @@ int closestVan(Location loc, vector<VanInfo> Vans, int busyVans[]){
 	}
 	return closestVan;
 }
-
-
 
 // Create route, returns a vector of locations
 vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosition) {
@@ -203,6 +213,7 @@ Node createNeighborNode(Node parent, Location neighborLocation, Location mainGoa
 	newNode.f = newNode.g + newNode.h;
 	newNode.parent = &parent;
 	newNode.location = neighborLocation;
+	newNode.edgeToParent = createRoute(parent.location, newNode.location);
 	return newNode;
 }
 
