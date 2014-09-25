@@ -67,6 +67,7 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	Node currentNode, nodeWithLeastF;
 	currentNode.location = start;
 	currentNode.f = 0;
+	vector<Location> neighborList;
 	Location rightNeighbor, leftNeighbor, topNeighbor, bottomNeighbor;
 	pair <int, int> rightEdge, leftEdge, topEdge, bottomEdge, cheapestEdge;
 	int rightCost, leftCost, topCost, bottomCost, cheapestCost, leastFNodePosition;
@@ -86,34 +87,42 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 		open.erase(open.begin() + leastFNodePosition);
 
 		// Generate all neighbors for nodeWithLeastF
-		// and set their parents to nodeWithLeastF
-
-		if((nodeWithLeastF.location.first == 0) && (nodeWithLeastF.location.second == 0)){
-
-			pair<int,int> rightEgde = goRight(start);
-		}
-
-		if((start.first == 40) && (start.second == 40)){
-			leftEdge = goLeft(start);
-			topEdge = goUp(start);
-			leftCost = Edges[leftEdge.first][leftEdge.second];
-			topCost = Edges[topEdge.first][topEdge.second];
-			if (leftCost < topCost){
-				cheapestCost = leftCost;
-				cheapestEdge = leftEdge;
-			}
-			else{
-				cheapestCost = topCost;
-				cheapestEdge = topEdge;
+		// and set their parents to nodeWithLeastF.
+		neighborList.clear();
+		neighborList = getNeighborList(nodeWithLeastF.location);
+		for (int i=0; !neighborList.empty(); i++){
+			Node newNode = createNeighborNode(nodeWithLeastF, neighborList[i], goal);
+			// If the new node is not already on the open-list OR closed-list 
+			// with a lower f-value than newNode, then we add the new node to 
+			// the open list.
+			if (shouldWeAddNode(newNode, open, closed)){
+				open.push_back(newNode);
 			}
 		}
+		closed.push_back(nodeWithLeastF);
 	}
 	return route;
 }
 
 
-
-
+bool shouldWeAddNode(Node node, vector<Node> open, vector<Node> closed){
+	bool returnValue = true;
+	int openSize = open.size();
+	for (int x=0; x<openSize; x++){
+		if ((open[x].location == node.location) && (open[x].f < node.f)){
+			returnValue = false;
+			return returnValue;
+		}
+	}
+	int closedSize = closed.size();
+	for (int x=0; x<closedSize; x++){
+		if ((closed[x].location == node.location) && (closed[x].f < node.f)){
+			returnValue = false;
+			return returnValue;
+		}
+	}
+	return returnValue;
+}
 
 void reset(){
 	Vans.clear();
