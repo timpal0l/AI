@@ -30,7 +30,7 @@ struct Node{
 	Node *parent;
 	Location location;
 	int f, g, h;
-	Location edge;
+	pair<int, int> edgeToParent;
 };
 
 // Returns Edge
@@ -55,7 +55,7 @@ pair<int, int> goRight(Location loc){
 
 
 int getManhattan(Location location, Location target){
-	int manhattanDistance = ((abs(location.first - target.first)) + (abs(location.second - target.second));
+	int manhattanDistance = ((abs(location.first - target.first)) + (abs(location.second - target.second)));
 	return manhattanDistance;
 }
 
@@ -172,26 +172,27 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 	return route;
 }
 
-Node createNode(int parentFCost, Location parentLocation, Location neighborLocation, Location mainGoal){
+Node createNode(Node parent, Location neighborLocation, Location mainGoal){
 	Node newNode;
-	if (parentLocation.first < neighborLocation.first){
-		newNode.g = parentFCost + Edges[goDown(parentLocation).first][goDown(parentLocation).second];
-		newNode.h = createRoute(neighborLocation, mainGoal).size();
-		newNode.f = newNode.g + newNode.h;
+	if (parent.location.first < neighborLocation.first){
+		newNode.g = parent.f + Edges[goDown(parent.location).first][goDown(parent.location).second];
+		newNode.location = 
 	}
-	else if (location.first > neighbor.first){
-		newNode.g = Edges[goUp(location).first][goUp(location).second];
+	else if (parent.location.first > neighborLocation.first){
+		newNode.g = parent.f + Edges[goUp(parent.location).first][goUp(parent.location).second];
 	}
-	else if (location.second < neighbor.second){
-		newNode.g = Edges[goRight(location).first][goRight(location).second];
+	else if (parent.location.second < neighborLocation.second){
+		newNode.g = parent.f + Edges[goRight(parent.location).first][goRight(parent.location).second];
 	}
-	else if (location.second > neighbor.second){
-		newNode.g = Edges[goLeft(location).first][goLeft(location).second];
+	else if (parent.location.second > neighborLocation.second){
+		newNode.g = parent.f + Edges[goLeft(parent.location).first][goLeft(parent.location).second];
 	}
-	newNode.f = parentFCost + newNode.g;
-	// DOES NOT WORK newNode.h = createRoute(neighbor, mainGoal).size();
+	newNode.h = getManhattan(neighborLocation, mainGoal);
+	newNode.f = newNode.g + newNode.h;
+	newNode.parent = &parent;
 	return newNode;
 }
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	const std::wstring group = L"LeGroup4";							// Group name for DM_Client()
