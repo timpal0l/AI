@@ -106,7 +106,7 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 				cheapestCost = topCost;
 				cheapestEdge = topEdge;
 			}
-		}*/
+		}
 	}
 	return route;
 }
@@ -172,11 +172,14 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 	return route;
 }
 
-Node createNode(Node parent, Location neighborLocation, Location mainGoal){
+
+// createNode takes parent, mainGoal and location of a neighbor, 
+// and returns a Node with all fields filled out correctly.
+// Nodes are to be added to the open-list in aStarRoute()
+Node createNeighborNode(Node parent, Location neighborLocation, Location mainGoal){
 	Node newNode;
 	if (parent.location.first < neighborLocation.first){
 		newNode.g = parent.f + Edges[goDown(parent.location).first][goDown(parent.location).second];
-		newNode.location = 
 	}
 	else if (parent.location.first > neighborLocation.first){
 		newNode.g = parent.f + Edges[goUp(parent.location).first][goUp(parent.location).second];
@@ -190,6 +193,7 @@ Node createNode(Node parent, Location neighborLocation, Location mainGoal){
 	newNode.h = getManhattan(neighborLocation, mainGoal);
 	newNode.f = newNode.g + newNode.h;
 	newNode.parent = &parent;
+	newNode.location = neighborLocation;
 	return newNode;
 }
 
