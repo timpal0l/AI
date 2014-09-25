@@ -251,19 +251,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	loc = Vans[0].location;
 	target.first = 10; 
 	target.second = 10;
-	route = createRoute(loc, target);
+	route = aStarRoute(loc, target);
 	Instructions.insert(make_pair(0, route));
 	target.first = 30;
 	target.second = 10;
-	route = createRoute(loc, target);
+	route = aStarRoute(loc, target);
 	Instructions.insert(make_pair(1, route));
 	target.first = 10;
 	target.second = 30;
-	route = createRoute(loc, target);
+	route = aStarRoute(loc, target);
 	Instructions.insert(make_pair(2, route));
 	target.first = 30;
 	target.second = 30;
-	route = createRoute(loc, target);
+	route = aStarRoute(loc, target);
 	Instructions.insert(make_pair(3, route));
 	dmc.sendInstructions(Instructions, output);
 
@@ -287,7 +287,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					}
 					loc = Vans[x].location;
 					target = waitingDeliveries[i].pickUp;
-					route = createRoute(loc, target);	
+					route = aStarRoute(loc, target);	
 					Instructions.insert(make_pair(x, route));
 					busyVans[x] = 1;
 					latestCargoBooked = waitingDeliveries[i].Number;
@@ -304,7 +304,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					if(busyVans[x] == 1 && Vans[x].cargo == activeDeliveries[i].Number){
 						loc = Vans[x].location;
 						target = activeDeliveries[i].dropOff;
-						route = createRoute(loc, target);	
+						route = aStarRoute(loc, target);	
 						Instructions.insert(make_pair(x, route));
 						busyVans[x] = 2;
 						lastCargoNumber[x] = activeDeliveries[i].Number;
