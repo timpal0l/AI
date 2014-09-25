@@ -11,6 +11,21 @@
 
 using namespace std;
 
+// GLOBAL VARIABLES ETC
+
+// Initiate a vector to contain the node vectors
+std::vector<std::vector<std::wstring>> nodes;					
+
+// Initiate everything needed for getInformation()
+int Time = 360;													
+vector<std::vector<int>> Edges;							
+vector<VanInfo> Vans;
+vector<DeliveryInfo> waitingDeliveries;
+vector<DeliveryInfo> activeDeliveries;
+vector<pair<int,int>> completedDeliveries;
+wstring output;		
+map <int,std::vector<std::pair<int,int>>> Instructions;	
+
 struct Node{
 	Node *parent;
 	Location location;
@@ -37,8 +52,9 @@ pair<int, int> goRight(Location loc){
 	return loc;
 }
 
+/*
 vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<int>> &Edges){
-	/*initialize the open and the closed vectors */
+	//initialize the open and the closed vectors 
 	vector<Node> open;
 	vector<Node> closed;
 	vector<pair<int, int>> route;
@@ -49,14 +65,9 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<i
 	int rightCost, leftCost, topCost, bottomCost, cheapestCost;
 	open.push_back(currentNode);
 	while(!open.empty()){
-
-
-
-
 		//Get the node off the open list with the lowest f and call it currentNode
 		if((start.first == 0) && (start.second == 0)){
-			/* topLeft */
-			/* check weight of down and right only */
+
 			pair<int,int> rightEgde = goRight(start);
 		}
 
@@ -78,7 +89,7 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<i
 	}
 	return route;
 }
-
+*/
 
 Node createNode(int parentFCost, Location location, Location neighbor, Location mainGoal, vector<vector<int>> &Edges){
 	Node newNode;
@@ -94,19 +105,17 @@ Node createNode(int parentFCost, Location location, Location neighbor, Location 
 	else if (location.second > neighbor.second){
 		newNode.g = Edges[goLeft(location).first][goLeft(location).second];
 	}
-	newNode.f = parentFCost + g;
-	newNode.h = createRoute(neighbor, mainGoal).size();
+	newNode.f = parentFCost + newNode.g;
+	// DOES NOT WORK newNode.h = createRoute(neighbor, mainGoal).size();
 	return newNode;
 }
 
-void reset(vector<VanInfo>& Vans, map<int,vector<pair<int,int>>>& Instructions, vector<DeliveryInfo>& waitingDeliveries, 
-	vector<DeliveryInfo>& activeDeliveries, vector<std::pair<int,int>>& completedDeliveries, wstring& output, vector<vector<int>>& Edges){
+void reset(){
 		Vans.clear();
 		Instructions.clear();
 		waitingDeliveries.clear();
 		activeDeliveries.clear();
 		completedDeliveries.clear();
-
 		output.clear();
 		Edges.clear();
 }
@@ -164,7 +173,6 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
 	const std::wstring group = L"LeGroup4";							// Group name for DM_Client()
 	bool OK;
 
@@ -178,18 +186,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	static const std::wstring b = dmc.getBusinessDistrictString();
 	static const std::wstring cb = dmc.getCentralBusinessDistrictString();
 
-	// Initiate a vector to contain the node vectors
-	std::vector<std::vector<std::wstring>> nodes;					
-
-	// Initiate everything needed for getInformation()
-	int Time = 360;													
-	vector<std::vector<int>> Edges;							
-	vector<VanInfo> Vans;
-	vector<DeliveryInfo> waitingDeliveries;
-	vector<DeliveryInfo> activeDeliveries;
-	vector<pair<int,int>> completedDeliveries;
-	wstring output;		
-	map <int,std::vector<std::pair<int,int>>> Instructions;	
 
 	// Start game, get info
 	dmc.startGame(nodes, output);
@@ -303,7 +299,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (!Instructions.empty()){
 			dmc.sendInstructions(Instructions, output);
 		}
-		reset(Vans, Instructions, waitingDeliveries, activeDeliveries, completedDeliveries, output, Edges);
+		reset();
 	}
 	return 0;
 }
