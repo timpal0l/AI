@@ -106,27 +106,8 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	return route;
 }
 
+int getAbsoluteDistance
 
-Node createNode(int parentFCost, Location parentLocation, Location neighborLocation, Location mainGoal){
-	Node newNode;
-	if (parentLocation.first < neighborLocation.first){
-		newNode.g = parentFCost + Edges[goDown(parentLocation).first][goDown(parentLocation).second];
-		newNode.h = createRoute(neighborLocation, mainGoal).size();
-		newNode.f = newNode.g + newNode.h;
-	}
-	else if (location.first > neighbor.first){
-		newNode.g = Edges[goUp(location).first][goUp(location).second];
-	}
-	else if (location.second < neighbor.second){
-		newNode.g = Edges[goRight(location).first][goRight(location).second];
-	}
-	else if (location.second > neighbor.second){
-		newNode.g = Edges[goLeft(location).first][goLeft(location).second];
-	}
-	newNode.f = parentFCost + newNode.g;
-	// DOES NOT WORK newNode.h = createRoute(neighbor, mainGoal).size();
-	return newNode;
-}
 
 void reset(){
 	Vans.clear();
@@ -188,6 +169,27 @@ vector<pair<int,int>> createRoute(Location initialPosition, Location targetPosit
 	return route;
 }
 
+
+Node createNode(int parentFCost, Location parentLocation, Location neighborLocation, Location mainGoal){
+	Node newNode;
+	if (parentLocation.first < neighborLocation.first){
+		newNode.g = parentFCost + Edges[goDown(parentLocation).first][goDown(parentLocation).second];
+		newNode.h = createRoute(neighborLocation, mainGoal).size();
+		newNode.f = newNode.g + newNode.h;
+	}
+	else if (location.first > neighbor.first){
+		newNode.g = Edges[goUp(location).first][goUp(location).second];
+	}
+	else if (location.second < neighbor.second){
+		newNode.g = Edges[goRight(location).first][goRight(location).second];
+	}
+	else if (location.second > neighbor.second){
+		newNode.g = Edges[goLeft(location).first][goLeft(location).second];
+	}
+	newNode.f = parentFCost + newNode.g;
+	newNode.h = createRoute(neighbor, mainGoal).size();
+	return newNode;
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
