@@ -30,6 +30,7 @@ struct Node{
 	Node *parent;
 	Location location;
 	int f, g, h;
+	Location edge;
 };
 
 // Returns Edge
@@ -52,21 +53,37 @@ pair<int, int> goRight(Location loc){
 	return loc;
 }
 
-/*
-vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<int>> &Edges){
-	//initialize the open and the closed vectors 
+
+vector<pair<int, int>> aStarRoute(Location start, Location goal){
+	// Initialize the open and the closed vectors 
 	vector<Node> open;
 	vector<Node> closed;
 	vector<pair<int, int>> route;
-	Node currentNode;
+	Node currentNode, nodeWithLeastF;
 	currentNode.location = start;
 	currentNode.f = 0;
+	Location rightNeighbor, leftNeighbor, topNeighbor, bottomNeighbor;
 	pair <int, int> rightEdge, leftEdge, topEdge, bottomEdge, cheapestEdge;
-	int rightCost, leftCost, topCost, bottomCost, cheapestCost;
+	int rightCost, leftCost, topCost, bottomCost, cheapestCost, leastFNodePosition;
+	// put the starting node on the open list
 	open.push_back(currentNode);
+	// While open is not empty	
 	while(!open.empty()){
-		//Get the node off the open list with the lowest f and call it currentNode
-		if((start.first == 0) && (start.second == 0)){
+		// Find the Node in Open[] with the least f value, call it nodeWithLeastF
+		nodeWithLeastF = open[0];
+		for (int i=0; i<open.size(); i++){
+			if (open[i].f > nodeWithLeastF.f){
+				nodeWithLeastF = open[i];
+				leastFNodePosition = i;
+			}
+		}
+		// Delete nodeWithLeastF from open[]
+		open.erase(open.begin() + leastFNodePosition);
+
+		// Generate all neighbors for nodeWithLeastF
+		// and set their parents to nodeWithLeastF
+
+		if((nodeWithLeastF.location.first == 0) && (nodeWithLeastF.location.second == 0)){
 
 			pair<int,int> rightEgde = goRight(start);
 		}
@@ -84,17 +101,18 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal, vector<vector<i
 				cheapestCost = topCost;
 				cheapestEdge = topEdge;
 			}
-			
-		}
+		}*/
 	}
 	return route;
 }
-*/
 
-Node createNode(int parentFCost, Location location, Location neighbor, Location mainGoal, vector<vector<int>> &Edges){
+
+Node createNode(int parentFCost, Location parentLocation, Location neighborLocation, Location mainGoal){
 	Node newNode;
-	if (location.first < neighbor.first){
-		newNode.g = Edges[goDown(location).first][goDown(location).second];
+	if (parentLocation.first < neighborLocation.first){
+		newNode.g = parentFCost + Edges[goDown(parentLocation).first][goDown(parentLocation).second];
+		newNode.h = createRoute(neighborLocation, mainGoal).size();
+		newNode.f = newNode.g + newNode.h;
 	}
 	else if (location.first > neighbor.first){
 		newNode.g = Edges[goUp(location).first][goUp(location).second];
@@ -111,13 +129,13 @@ Node createNode(int parentFCost, Location location, Location neighbor, Location 
 }
 
 void reset(){
-		Vans.clear();
-		Instructions.clear();
-		waitingDeliveries.clear();
-		activeDeliveries.clear();
-		completedDeliveries.clear();
-		output.clear();
-		Edges.clear();
+	Vans.clear();
+	Instructions.clear();
+	waitingDeliveries.clear();
+	activeDeliveries.clear();
+	completedDeliveries.clear();
+	output.clear();
+	Edges.clear();
 }
 
 int closestVan(Location loc, vector<VanInfo> Vans, int busyVans[]){
@@ -268,7 +286,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			cout << endl;
 		}
-
 		if(!completedDeliveries.empty()){
 			cout << "Completed delivery:  ";
 			for(int i = 0; i < completedDeliveries.size(); i++){
@@ -286,7 +303,6 @@ int _tmain(int argc, _TCHAR* argv[])
 				break;
 			}
 		}
-
 		cout << "Position of van0: " << Vans[0].location.first << " " << Vans[0].location.second << endl;
 		cout << "Position of van1: " << Vans[1].location.first << " " << Vans[1].location.second << endl;
 		cout << "Position of van2: " << Vans[2].location.first << " " << Vans[2].location.second << endl;
