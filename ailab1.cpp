@@ -45,100 +45,10 @@ pair<int, int> goRight(Location loc){
 	loc.second = loc.second;
 	return loc;
 }
-
-vector <Location> getNeighborList(Location location){
-
-	vector <Location> neighbors;
-
-	Location down = make_pair((location.first + 1), (location.second));
-	Location right = make_pair((location.first), (location.second + 1));
-	Location top = make_pair((location.first -1),(location.second)); 
-	Location left = make_pair((location.first), (location.second -1));
-
-	if((location.first == 0) && (location.second == 0)){
-
-		/*topLeft case*/
-		neighbors.push_back(down);
-		neighbors.push_back(right);
-		return neighbors;
-	}
-
-	else if ( ((location.first > 0) && (location.first < 40)) && (location.second == 0) ){
-
-		/*midLeft cases*/
-		neighbors.push_back(down);
-		neighbors.push_back(right);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-
-	else if ((location.first == 40) && (location.second == 0)){
-
-		/*bottomLeft case*/
-		neighbors.push_back(right);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-
-	else if ( ((location.first == 0) && (location.second > 0)) && (location.second < 40) ){
-
-		/*topMid case*/
-		neighbors.push_back(down);
-		neighbors.push_back(right);
-		neighbors.push_back(left);
-		return neighbors;
-	}
-
-	else if ( ((location.first > 0) && (location.first < 40)) && ((location.second > 0) && (location.second < 40)) ) {
-
-		/* midMid cases */
-		neighbors.push_back(down);
-		neighbors.push_back(right);
-		neighbors.push_back(left);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-
-	else if ( (location.first == 40) && ((location.second > 0) && (location.second < 40)) ){
-
-		/* bottomMid cases */
-		neighbors.push_back(right);
-		neighbors.push_back(left);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-
-	else if ( (location.first == 0) && (location.second == 40) ){
-
-		/* topRight case */
-		neighbors.push_back(down);
-		neighbors.push_back(left);
-		return neighbors;
-	}
-
-	else if( ((location.first > 0) && (location.first < 40)) && (location.second == 40) ){
-
-		/* midRight cases */
-		neighbors.push_back(down);
-		neighbors.push_back(left);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-
-	else {
-
-		/* bottomRight case */
-		neighbors.push_back(left);
-		neighbors.push_back(top);
-		return neighbors;
-	}
-}
-
 int getManhattan(Location location, Location target){
 	int manhattanDistance = ((abs(location.first - target.first)) + (abs(location.second - target.second)));
 	return manhattanDistance;
-}
-
+}	
 vector<pair<int, int>> getAStarRoute(Node *node){
 	vector<pair<int, int>> route;
 	while (node->parent != NULL){
@@ -238,8 +148,7 @@ Node* createNeighborNode(Node *parent, Location neighborLocation, Location mainG
 }
 vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	// Initialize the open and the closed vectors
-	vector<Node*> open;
-	vector<Node*> closed;
+	vector<Node*> open, closed;
 	vector<pair<int, int>> route;
 	Node *currentNode = new Node;
 
@@ -249,7 +158,7 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 	currentNode->f = 0;
 	currentNode->parent = NULL;
 	currentNode->edgeToParent = make_pair(0,0);
-	vector<Location> neighborList;
+	vector<Node*> neighborList;
 	int leastFNodeIndex = 0;
 	// put the starting node on the open list
 	open.push_back(currentNode);
@@ -270,33 +179,89 @@ vector<pair<int, int>> aStarRoute(Location start, Location goal){
 		// Generate all neighbors for nodeWithLeastF
 		// and set their parents to nodeWithLeastF.
 		neighborList.clear();
-		neighborList = getNeighborList(nodeWithLeastF->location);
+
+		if (nodeWithLeastF->location.first == 0){}
+		else {
+			Node *upNode = new Node;
+			vector<pair<int, int>> upEdge = createRoute(nodeWithLeastF->location, make_pair(nodeWithLeastF->location.first -1, nodeWithLeastF->location.second));
+			upNode->location = make_pair(nodeWithLeastF->location.first -1, nodeWithLeastF->location.second);
+			upNode->edgeToParent = upEdge[0];
+			upNode->g = nodeWithLeastF->g + Edges[upEdge[0].first][upEdge[0].second];
+			upNode->h = getManhattan(make_pair(nodeWithLeastF->location.first -1, nodeWithLeastF->location.second), goal);
+			upNode->f = upNode->g + upNode->h;
+			upNode->parent = nodeWithLeastF;
+			neighborList.push_back(upNode);
+		}
+		// down neighbor
+		if (nodeWithLeastF->location.first == 40){}
+		else{
+			Node *downNode = new Node;
+			vector<pair<int, int>> downEdge = createRoute(nodeWithLeastF->location, make_pair(nodeWithLeastF->location.first +1, nodeWithLeastF->location.second));
+			downNode->location = make_pair(nodeWithLeastF->location.first +1, nodeWithLeastF->location.second);
+			downNode->edgeToParent = downEdge[0];
+			downNode->g = nodeWithLeastF->g + Edges[downEdge[0].first][downEdge[0].second];
+			downNode->h = getManhattan(make_pair(nodeWithLeastF->location.first +1, nodeWithLeastF->location.second), goal);
+			downNode->f = downNode->g + downNode->h;
+			downNode->parent = nodeWithLeastF;
+			neighborList.push_back(downNode);
+		}
+		// left neighbor
+		if (nodeWithLeastF->location.second == 0){}
+		else{
+			Node *leftNode = new Node;
+			vector<pair<int, int>> leftEdge = createRoute(nodeWithLeastF->location, make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second -1));
+			leftNode->location = make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second -1);
+			leftNode->edgeToParent = leftEdge[0];
+			leftNode->g = nodeWithLeastF->g + Edges[leftEdge[0].first][leftEdge[0].second];
+			leftNode->h = getManhattan(make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second -1), goal);
+			leftNode->f = leftNode->g + leftNode->h;
+			leftNode->parent = nodeWithLeastF;
+			neighborList.push_back(leftNode);
+		}
+		// right neighbor
+		if (nodeWithLeastF->location.second == 40){}
+		else{
+			Node *rightNode = new Node;
+			vector<pair<int, int>> rightEdge = createRoute(nodeWithLeastF->location, make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second +1));
+			rightNode->location = make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second +1);
+			rightNode->edgeToParent = rightEdge[0];
+			rightNode->g = nodeWithLeastF->g + Edges[rightEdge[0].first][rightEdge[0].second];
+			rightNode->h = getManhattan(make_pair(nodeWithLeastF->location.first, nodeWithLeastF->location.second +1), goal);
+			rightNode->f = rightNode->g + rightNode->h;
+			rightNode->parent = nodeWithLeastF;
+			neighborList.push_back(rightNode);
+		}
+		// up neighbor
+		// neighborList = getNeighbors(nodeWithLeastF);
 		for (int i=0; i<neighborList.size(); i++){
-			Node *newNode = createNeighborNode(nodeWithLeastF, neighborList[i], goal);
-			// If the new node is not already on the open-list OR closed-list
-			// with a lower f-value than newNode, then we add the new node to
-			// the open list.
-			if (neighborList[i] == goal){
-				route = getAStarRoute(newNode);
-				cout << endl;
-				cout << "Manhattan distance of the route: " << getManhattan(start, goal) << endl;
-				cout << "length of the a star route: " << route.size() << endl;
-				return route;
+			bool addToOpen = true;
+			int openSize = open.size();
+			int closedSize = closed.size();
+			for (int j=0; j<openSize; j++){
+				if (neighborList[i]->location == goal){
+					route = getAStarRoute(neighborList[i]);
+					cout << "Route is: " << route[0].first << " etc etc " << endl;
+					return route;
+				}
+				if (neighborList[i]->location == open[j]->location && neighborList[i]->f > open[j]->f){
+					addToOpen = false;
+				}
 			}
-			if (shouldWeAddNode(newNode, open, closed)){
-				open.push_back(newNode);
+			for (int j=0; j<closedSize; j++){
+				if (neighborList[i]->location == closed[j]->location && neighborList[i]->f > closed[j]->f){
+					addToOpen = false;
+				}
+			}
+			if (addToOpen){
+				open.push_back(neighborList[i]);
 			}
 		}
 		closed.push_back(nodeWithLeastF);
 	}
+	return route;
 }
-
-
-int _tmain(int argc, _TCHAR* argv[])
-{
 	const std::wstring group = L"LeGroup4";	// Group name for DM_Client()
 	bool OK;
-	srand(time(NULL));
 	DM_Client dmc = DM_Client(group, OK);	// Initiate DM client
 	// Why?
 	static const std::wstring hws = dmc.getHighayString();
@@ -304,8 +269,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	static const std::wstring b = dmc.getBusinessDistrictString();
 	static const std::wstring cb = dmc.getCentralBusinessDistrictString();
 	// Start game, get info
-	dmc.startGame(nodes, output);
-	dmc.getInformation(Time, Edges, Vans, waitingDeliveries, activeDeliveries, completedDeliveries, output);
 	// 0 = not busy, 1 = picking up parcel, 2 = dropping off parcel
 	int busyVans[5] = {0,0,0,0,0};
 	int lastCargoNumber[5] = {-1,-1,-1,-1,-1};
@@ -313,22 +276,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	pair <int, int> loc;
 	pair <int, int> target;
 	vector<pair<int,int>> route;
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	dmc.startGame(nodes, output);
+	dmc.getInformation(Time, Edges, Vans, waitingDeliveries, activeDeliveries, completedDeliveries, output);
+	srand(time(NULL));
 	loc = Vans[0].location;
 	target.first = 10;
-	target.second = 20;
-	route = aStarRoute(loc, target);
-	Instructions.insert(make_pair(0, route));
-	target.first = 20;
 	target.second = 10;
-	route = aStarRoute(loc, target);
+	route = createRoute(loc, target);
+
+	Instructions.insert(make_pair(0, route));
+	target.first = 30;
+	target.second = 10;
+	route = createRoute(loc, target);
 	Instructions.insert(make_pair(1, route));
-	target.first = 20;
+	target.first = 10;
 	target.second = 30;
-	route = aStarRoute(loc, target);
+	route = createRoute(loc, target);
 	Instructions.insert(make_pair(2, route));
 	target.first = 30;
-	target.second = 20;
-	route = aStarRoute(loc, target);
+	target.second = 30;
+	route = createRoute(loc, target);
 	Instructions.insert(make_pair(3, route));
 	dmc.sendInstructions(Instructions, output);
 
@@ -338,6 +308,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << " " << endl;
 		cout << "Latest cargo booked: " << latestCargoBooked << endl;
 		dmc.getInformation(Time, Edges, Vans, waitingDeliveries, activeDeliveries, completedDeliveries, output);
+
 		if (!waitingDeliveries.empty()){
 			cout << "Waiting delivery at node: ";
 			for(int i = 0; i < waitingDeliveries.size(); i++){
@@ -382,11 +353,10 @@ int _tmain(int argc, _TCHAR* argv[])
 					if(lastCargoNumber[x] == completedDeliveries[i].first){
 						busyVans[x] = 0;
 						if (waitingDeliveries.empty()){
-							loc = Vans[x].location;
-							target.first = 20;
-							target.second = 20;
-							route = aStarRoute(loc, target);
-							Instructions.insert(make_pair(x, route));
+								loc = Vans[x].location;
+								target.first = 20;
+								target.second = 20;
+								route = createRoute(loc, target);
 						}
 						lastCargoNumber[x] = -1;
 					}
@@ -403,7 +373,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Position of van2: " << Vans[2].location.first << " " << Vans[2].location.second << endl;
 		cout << "Position of van3: " << Vans[3].location.first << " " << Vans[3].location.second << endl;
 		cout << "Position of van4: " << Vans[4].location.first << " " << Vans[4].location.second << endl;
-		cout << "busyVans 0 to 5 status: " << busyVans[0] << " " << busyVans[1] << " " << busyVans[2] << " " << busyVans[3] << " " << busyVans[4] << endl;
+		cout << "vans status: " << busyVans[0] << " " << busyVans[1] << " " << busyVans[2] << " " << busyVans[3] << " " << busyVans[4] << endl;
 		// Clear everything before next iteration
 		if (!Instructions.empty()){
 			dmc.sendInstructions(Instructions, output);
